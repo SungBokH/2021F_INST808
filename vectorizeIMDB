@@ -16,7 +16,7 @@ for text_files in [train_neg_text_files, train_pos_text_files, test_neg_text_fil
         text0.close()
         text_list.append(message)
 
-text_list=[re.sub(r'[^A-Za-z0-9 ]+', '', s) for s in text_list] # Keep only alphanumeric and space.
+text_list=[re.sub(r'[^A-Za-z ]+', '', s) for s in text_list] # Keep only alphanumeric and space.
     
 
 vectorizer = CountVectorizer(stop_words='english')
@@ -30,6 +30,9 @@ Y=[]
 for text_files in [train_neg_text_files, train_pos_text_files, test_neg_text_files, test_pos_text_files]:
     for i in range(len(text_files)):
         Y.append(float(text_files[i][-5]))
+
+
+# X[i].toarray(), Y[i]
 
 
 
@@ -55,8 +58,12 @@ L=[len(s) for s in yelp_texts]
 Empty=[i for i, j in enumerate(L) if j == 0]
 
 yelp_texts=[element for i, element in enumerate(yelp_texts) if i not in Empty]
+yelp_texts=pd.Series(yelp_texts) # for memory efficiency
 Y_yelp=[float(i) for i in df_review["stars"].tolist()]
 
 
 X_yelp=vectorizer.fit_transform(yelp_texts)
 Y_yelp=[element for i, element in enumerate(Y_yelp) if i not in Empty]
+
+
+
