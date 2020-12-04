@@ -1,4 +1,7 @@
 import glob
+import re
+import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
 
 train_neg_text_files=glob.glob("C:/Users/hys35/Desktop/yelp_dataset-2/aclImdb_v1 (1).tar/aclImdb/train/neg/*.txt")
 train_pos_text_files=glob.glob("C:/Users/hys35/Desktop/yelp_dataset-2/aclImdb_v1 (1).tar/aclImdb/train/pos/*.txt")
@@ -13,15 +16,15 @@ for text_files in [train_neg_text_files, train_pos_text_files, test_neg_text_fil
         text0.close()
         text_list.append(message)
 
+text_list=[re.sub(r'[^A-Za-z0-9 ]+', '', s) for s in text_list] # Keep only alphanumeric and space.
     
-from sklearn.feature_extraction.text import CountVectorizer
+
 vectorizer = CountVectorizer(stop_words='english')
 
 X = vectorizer.fit_transform(text_list)
 
 
 # vectorizer.get_feature_names()
-# X.toarray()
 
 Y=[]
 for text_files in [train_neg_text_files, train_pos_text_files, test_neg_text_files, test_pos_text_files]:
@@ -29,4 +32,31 @@ for text_files in [train_neg_text_files, train_pos_text_files, test_neg_text_fil
         Y.append(float(text_files[i][-5]))
 
 
-# X.toarray()[i], Y[i]
+
+
+
+# For yelp dataset
+
+dataset_review= pd.read_json(r'C:\Users\hys35\Desktop\yelp_dataset-2\yelp_academic_dataset_review.json', lines=True, chunksize=10000)
+
+chunk_list = []
+for chunk in dataset_review:
+    chunk_list.append(chunk)
+df_review = pd.concat(chunk_list, ignore_index=True)
+
+df_review["text"].tolist()
+df_review["stars"].tolist()
+
+yelp_texts=[re.sub(r'[^A-Za-z0-9 ]+', '', s) for s in df_review["text"]]
+
+L=[len(s) for s in yelp_texts]
+
+[i for i, j in enumerate(L) if j == 0]
+Empty=[i for i, j in enumerate(L) if j == 0]
+
+yelp_texts=[element for i, element in enumerate(yelp_texts) if i not in Empty]
+Y_yelp=[float(i) for i in df_review["stars"].tolist()]
+
+
+X_yelp=vectorizer.fit_transform(yelp_texts)
+Y_yelp=[element for i, element in enumerate(Y_yelp) if i not in Empty]
