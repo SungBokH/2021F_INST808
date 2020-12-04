@@ -1,0 +1,32 @@
+import glob
+
+train_neg_text_files=glob.glob("C:/Users/hys35/Desktop/yelp_dataset-2/aclImdb_v1 (1).tar/aclImdb/train/neg/*.txt")
+train_pos_text_files=glob.glob("C:/Users/hys35/Desktop/yelp_dataset-2/aclImdb_v1 (1).tar/aclImdb/train/pos/*.txt")
+test_neg_text_files=glob.glob("C:/Users/hys35/Desktop/yelp_dataset-2/aclImdb_v1 (1).tar/aclImdb/test/neg/*.txt")
+test_pos_text_files=glob.glob("C:/Users/hys35/Desktop/yelp_dataset-2/aclImdb_v1 (1).tar/aclImdb/test/pos/*.txt")
+
+text_list=[]
+for text_files in [train_neg_text_files, train_pos_text_files, test_neg_text_files, test_pos_text_files]:
+    for text in text_files:
+        text0 = open(text,'r',encoding="utf8")
+        message=text0.read()
+        text0.close()
+        text_list.append(message)
+
+    
+from sklearn.feature_extraction.text import CountVectorizer
+vectorizer = CountVectorizer(stop_words='english')
+
+X = vectorizer.fit_transform(text_list)
+
+
+# vectorizer.get_feature_names()
+# X.toarray()
+
+Y=[]
+for text_files in [train_neg_text_files, train_pos_text_files, test_neg_text_files, test_pos_text_files]:
+    for i in range(len(text_files)):
+        Y.append(float(text_files[i][-5]))
+
+
+# X.toarray()[i], Y[i]
