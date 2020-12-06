@@ -29,7 +29,10 @@ X = vectorizer.fit_transform(text_list)
 Y=[]
 for text_files in [train_neg_text_files, train_pos_text_files, test_neg_text_files, test_pos_text_files]:
     for i in range(len(text_files)):
-        Y.append(float(text_files[i][-5]))
+        if text_files[i][-5]=='0':
+            Y.append(float(10))
+        else:
+            Y.append(float(text_files[i][-5]))
 
 
 # X[i].toarray(), Y[i]
